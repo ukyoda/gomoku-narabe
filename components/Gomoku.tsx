@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styles from './Gomoku.module.css'
+import classNamesBind from 'classnames/bind'
+
+const cx = classNamesBind.bind(styles)
 
 type Player = 'white' | 'black'
 
@@ -47,14 +50,18 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
     <div>
       <p>{`${turn === 'black' ? '黒' : '白'}のターンです`}</p>
       <p>{gameStateMessage}</p>
-      <div>
+      <div className={styles.board}>
         {
           [...range(0, board.height)].map(y => (
             <div key={`board-row-${y}`}>
               {
                 [...range(0, board.width)].map(x => {
                   const point = board.find({ x, y })
-                  const marker = point === 'black' ? '○' : point === 'white' ? '×' : ''
+                  const marker =
+                    point === 'black'
+                      ? <span className={styles.stone} aria-label={`${point} stone`} />
+                    : point === 'white'
+                      ? <span className={cx('stone', 'black')} aria-label={`${point} stone`} /> : ''
                   return (
                     <button
                       type='button'

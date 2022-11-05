@@ -1,6 +1,50 @@
 
+.board {
+  --cellSize: 30px;
+  --blackStone: #000;
+  --whiteStone: #fff;
+}
+
 .point {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #ddd;
+  width: var(--cellSize);
+  height: var(--cellSize);
+  position: relative;
+}
+
+.point::before {
+  border-left: 1px solid #444;
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.point::after {
+  border-top: 1px solid #444;
+  content: ' ';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.stone {
+  background: var(--whiteStone);
+  border: 1px solid var(--blackStone);
+  border-radius: var(--cellSize);
+  width: calc(var(--cellSize) - 10%);
+  height: calc(var(--cellSize) - 10%);
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.stone.black {
+  background: var(--blackStone);
 }
