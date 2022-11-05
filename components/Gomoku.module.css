@@ -1,6 +1,6 @@
 
 .board {
-  --cellSize: 30px;
+  --cellSize: 50px;
   --blackStone: #000;
   --whiteStone: #fff;
 }

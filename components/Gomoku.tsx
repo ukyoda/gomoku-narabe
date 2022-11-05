@@ -17,6 +17,21 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
   const [board, setBoard] = useState<Board>(new Board({ width, height }))
   const [turn, setTurn] = useState<Player>('black')
   const [gameState, setGameState] = useState<GameState>('playing')
+  const [playHistory, setPlayHistory] = useState<{ turn: Player, point: BoardPoint}[]>([])
+  useEffect(() => {
+    if (playHistory.length === 0) {
+      return
+    }
+    const lastTurn = playHistory[playHistory.length - 1]
+    const points = [...board.scanBottomLeftToTopRight(lastTurn.point)]
+    points.forEach(point => {
+      const id = `#point-${point.x}-${point.y}`
+      const button = document.querySelector<HTMLButtonElement>(id)
+      if (button !== null) {
+        button.style.background = '#efefef';
+      }
+    })
+  }, [board, playHistory])
 
   const putStone = (point: BoardPoint) => {
     if (gameState !== 'playing') {
@@ -30,10 +45,12 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
     if (newGameState === 'playing') {
       setBoard(Board.new(board))
       setTurn(prev => prev === 'black' ? 'white' : 'black')
+      setPlayHistory(prev => ([...prev, { turn, point }]))
     } else {
       setGameState(newGameState)
     }
   }
+
   const gameStateMessage = useMemo(() => {
     switch(gameState) {
       case 'blackWin':
@@ -59,9 +76,10 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
                   const point = board.find({ x, y })
                   const marker =
                     point === 'black'
-                      ? <span className={styles.stone} aria-label={`${point} stone`} />
+                      ? <span className={cx('stone', 'black')} aria-label={`${point} stone`} />
                     : point === 'white'
-                      ? <span className={cx('stone', 'black')} aria-label={`${point} stone`} /> : ''
+                      ? <span className={styles.stone} aria-label={`${point} stone`} />
+                    : null
                   return (
                     <button
                       type='button'
@@ -189,7 +207,7 @@ class Board {
     }
     const length = Math.min(this.#width - begin.x, begin.y + 1)
     for (let offset = 0; offset < length; offset++) {
-      yield { x: begin.x + offset, y: this.#height - offset - 1}
+      yield { x: begin.x + offset, y: begin.y - offset}
     }
   }
 
