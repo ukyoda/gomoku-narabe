@@ -49,8 +49,10 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
   }, [gameState])
   return (
     <div>
-      <p>{`${turn === 'black' ? '黒' : '白'}のターンです`}</p>
-      <p>{gameStateMessage}</p>
+      <div className={styles.gameInformation}>
+        <p>{`${turn === 'black' ? '黒' : '白'}のターンです`}</p>
+        <p>{gameStateMessage}</p>
+      </div>
       <div className={styles.board}>
         {
           [...range(0, board.height)].map(y => (

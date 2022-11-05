@@ -1,8 +1,19 @@
 
+
 .board {
-  --cellSize: 50px;
+  --cellSize: 3.2rem;
   --blackStone: #000;
   --whiteStone: #fff;
+}
+
+.gameInformation {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.2rem;
+}
+
+.gameInformation * + * {
+  margin-left: 10px;
 }
 
 .point {
