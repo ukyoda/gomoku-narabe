@@ -11,3 +11,25 @@
   font-size: 2rem;
   margin-bottom: 10px;
 }
+
+.footer {
+  width: 100%;
+  padding: 10px 13px;
+}
+
+.footer .footerContainer {
+  display: flex;
+  align-items: center;
+}
+
+.footer .footerContainer * + * {
+  margin-left: 10px;
+}
+
+.footer a {
+  color: rgb(91, 114, 228);
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
