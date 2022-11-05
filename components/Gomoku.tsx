@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styles from './Gomoku.module.css'
 
 type Player = 'white' | 'black'
@@ -59,6 +59,7 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
                     <button
                       type='button'
                       className={styles.point}
+                      id={`point-${x}-${y}`}
                       key={`point-${x}-${y}`}
                       onClick={() => putStone({ x, y })}>
                       {marker}
@@ -114,13 +115,31 @@ class Board {
     // 横方向にスキャン
     const winnerBlackCondition = 'black|black|black|black|black'
     const winnerWhiteCondition = 'white|white|white|white|white'
-    const pointsX = [...this.scanX(y)].join('|')
-    const pointsY = [...this.scanY(x)].join('|')
+    const pointsX = [...this.scanX(y)]
+      .map(pt => this.#points[this.#getIndex(pt)])
+      .join('|')
+    const pointsY = [...this.scanY(x)]
+      .map(pt => this.#points[this.#getIndex(pt)])
+      .join('|')
+    const pointsTL2BR = [...this.scanTopLeftToBottomRight({ x, y })]
+      .map(pt => this.#points[this.#getIndex(pt)])
+      .join('|')
+    const pointsBL2TR = [...this.scanBottomLeftToTopRight({ x, y })]
+      .map(pt => this.#points[this.#getIndex(pt)])
+      .join('|')
 
-    if (pointsX.includes(winnerBlackCondition) || pointsY.includes(winnerBlackCondition)) {
+    if (
+      pointsX.includes(winnerBlackCondition) ||
+      pointsY.includes(winnerBlackCondition) ||
+      pointsTL2BR.includes(winnerBlackCondition) ||
+      pointsBL2TR.includes(winnerBlackCondition)) {
       return 'blackWin'
     }
-    if (pointsX.includes(winnerWhiteCondition) || pointsY.includes(winnerWhiteCondition)) {
+    if (
+      pointsX.includes(winnerWhiteCondition) ||
+      pointsY.includes(winnerWhiteCondition) ||
+      pointsTL2BR.includes(winnerWhiteCondition) ||
+      pointsBL2TR.includes(winnerWhiteCondition)) {
       return 'whiteWin'
     }
     if (this.#points.every(val => val === undefined)) {
@@ -135,15 +154,35 @@ class Board {
 
   *scanX (y: number) {
     for (let x = 0; x < this.#width; x++) {
-      const idx = this.#getIndex({ x, y })
-      yield this.#points[idx]
+      yield { x, y }
     }
   }
 
   *scanY (x: number) {
     for (let y = 0; y < this.#height; y++) {
-      const idx = this.#getIndex({ x, y })
-      yield this.#points[idx]
+      yield { x, y }
+    }
+  }
+
+  *scanTopLeftToBottomRight ({ x, y }: BoardPoint) {
+    const begin: BoardPoint = {
+      x: x < y ? 0 : x - y,
+      y: x > y ? 0 : y - x
+    }
+    const length = Math.min(this.#width - begin.x, this.#height - begin.y)
+    for (let offset = 0; offset < length; offset++) {
+      yield { x: begin.x + offset, y: begin.y + offset }
+    }
+  }
+
+  *scanBottomLeftToTopRight ({ x, y }: BoardPoint) {
+    const begin: BoardPoint = {
+      x: x < (this.#height - 1 - y) ? 0 : x - (this.#height - 1 - y),
+      y: x > (this.#height - 1 - y) ? this.#height - 1 : y + x
+    }
+    const length = Math.min(this.#width - begin.x, begin.y + 1)
+    for (let offset = 0; offset < length; offset++) {
+      yield { x: begin.x + offset, y: this.#height - offset - 1}
     }
   }
 
