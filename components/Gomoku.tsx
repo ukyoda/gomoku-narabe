@@ -35,6 +35,12 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
     }
   }
 
+  const reset = useCallback(() => {
+    setBoard(new Board({ width, height }))
+    setTurn('black')
+    setGameState('playing')
+  }, [height, width])
+
   const gameStateMessage = useMemo(() => {
     switch(gameState) {
       case 'blackWin':
@@ -52,6 +58,9 @@ export const Gomoku: React.FC<Props> = ({ width, height }) => {
       <div className={styles.gameInformation}>
         <p>{`${turn === 'black' ? '黒' : '白'}のターンです`}</p>
         <p>{gameStateMessage}</p>
+        <button type='button' className={styles.resetButton} onClick={reset}>
+          ゲームを最初からはじめる
+        </button>
       </div>
       <div className={styles.board}>
         {

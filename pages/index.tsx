@@ -5,7 +5,7 @@ import styles from '../styles/Home.module.css'
 const Home: NextPage = () => {
   return (
     <div className={styles.container}>
-      <h1>五目並べ</h1>
+      <h1 className={styles.title}>五目並べ</h1>
       <Gomoku width={19} height={19} />
     </div>
   )
